@@ -1,52 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caesar Cipher Tool</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .container {
-            background-color: white;
-            padding: 30px;
+            background: #f5f5f5;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 0;
+            margin-top: 20px;
         }
 
         textarea {
             width: 100%;
             height: 100px;
-            font-size: 16px;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: vertical;
+            margin: 10px 0;
+            padding: 8px;
+        }
+
+        .controls {
+            margin: 15px 0;
         }
 
         input[type="number"] {
             width: 80px;
-            font-size: 16px;
             padding: 5px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
     </style>
 </head>
@@ -54,33 +39,59 @@
 <body>
     <div class="container">
         <h1>Caesar Cipher Tool</h1>
-        <textarea id="input-text" placeholder="Enter your text here..." oninput="encryptDecrypt()"></textarea>
-        <br>
-        <label for="shift-amount">Shift amount:</label>
-        <input type="number" id="shift-amount" min="-26" max="26" value="7" oninput="encryptDecrypt()">
-        <textarea id="output-text" placeholder="Encrypted text will appear here..." readonly></textarea>
+
+        <div class="controls">
+            <label for="shift">Shift amount:</label>
+            <input type="number" id="shift" value="3" min="-25" max="25">
+        </div>
+
+        <div>
+            <label for="input">Input text:</label>
+            <textarea id="input" placeholder="Enter text to encrypt/decrypt"></textarea>
+        </div>
+
+        <div>
+            <label for="output">Result:</label>
+            <textarea id="output" readonly></textarea>
+        </div>
     </div>
 
     <script>
-        function encryptDecrypt() {
-            const inputText = document.getElementById("input-text").value;
-            const shiftAmount = parseInt(document.getElementById("shift-amount").value);
-            let outputText = "";
+        function caesarCipher(text, shift) {
+            // Normalize the shift to be within -26 to 26
+            shift = ((shift % 26) + 26) % 26;
 
-            for (let i = 0; i < inputText.length; i++) {
-                let charCode = inputText.charCodeAt(i);
+            return text.split('').map(char => {
+                // Only transform letters
+                if (char.match(/[a-z]/i)) {
+                    const code = char.charCodeAt(0);
+                    const isUpperCase = code >= 65 && code <= 90;
+                    const base = isUpperCase ? 65 : 97;
 
-                if (charCode >= 65 && charCode <= 90) {
-                    outputText += String.fromCharCode(((charCode - 65 + shiftAmount) % 26) + 65);
-                } else if (charCode >= 97 && charCode <= 122) {
-                    outputText += String.fromCharCode(((charCode - 97 + shiftAmount) % 26) + 97);
-                } else {
-                    outputText += inputText.charAt(i);
+                    // Convert to 0-25 range, apply shift, and wrap around using modulo
+                    let shifted = (code - base + shift) % 26;
+                    if (shifted < 0) shifted += 26;
+
+                    // Convert back to ASCII and return the character
+                    return String.fromCharCode(base + shifted);
                 }
-            }
-
-            document.getElementById("output-text").value = outputText;
+                return char;
+            }).join('');
         }
+
+        // Add event listeners
+        const inputText = document.getElementById('input');
+        const shiftAmount = document.getElementById('shift');
+        const outputText = document.getElementById('output');
+
+        function updateOutput() {
+            const text = inputText.value;
+            const shift = parseInt(shiftAmount.value) || 0;
+            outputText.value = caesarCipher(text, shift);
+        }
+
+        inputText.addEventListener('input', updateOutput);
+        shiftAmount.addEventListener('input', updateOutput);
     </script>
 </body>
 
