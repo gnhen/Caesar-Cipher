@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            font-size: 16px;
+            padding: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Caesar Cipher Tool</h1>
+        <textarea id="input-text" placeholder="Enter your text here..." oninput="encryptDecrypt()"></textarea>
+        <br>
+        <label for="shift-amount">Shift amount:</label>
+        <input type="number" id="shift-amount" min="-26" max="26" value="7" oninput="encryptDecrypt()">
+        <textarea id="output-text" placeholder="Encrypted/Decrypted text will appear here..." readonly></textarea>
+    </div>
+
+    <script>
+        function encryptDecrypt() {
+            const inputText = document.getElementById("input-text").value;
+            const shiftAmount = parseInt(document.getElementById("shift-amount").value);
+            let outputText = "";
+
+            for (let i = 0; i < inputText.length; i++) {
+                let charCode = inputText.charCodeAt(i);
+
+                if (charCode >= 65 && charCode <= 90) {
+                    outputText += String.fromCharCode(((charCode - 65 + shiftAmount) % 26) + 65);
+                } else if (charCode >= 97 && charCode <= 122) {
+                    outputText += String.fromCharCode(((charCode - 97 + shiftAmount) % 26) + 97);
+                } else {
+                    outputText += inputText.charAt(i);
+                }
+            }
+
+            document.getElementById("output-text").value = outputText;
+        }
+    </script>
+</body>
+
+</html>
